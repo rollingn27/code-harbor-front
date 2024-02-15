@@ -9,6 +9,7 @@
         placeholder="Email Address"
         autocomplete="off"
         v-model="loginInfo.userId"
+        ref="userId"
       />
       <input
         type="password"
@@ -20,7 +21,7 @@
       <button class="sign-in-button" @click="signIn">Sign In</button>
       <div class="link-area">
         <div>Forgot password?</div>
-        <div>Sign Up</div>
+        <div @click="goSignUp">Sign Up</div>
       </div>
     </div>
   </div>
@@ -28,24 +29,44 @@
 
 <script setup>
 import { loginService } from '@/api'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import useLogger from '@/composables/logger'
 import { useLoadingStore } from '@/stores/loading.store'
+import { useAuthStore } from '@/stores/auth.store'
+import { useRouter } from 'vue-router'
+const userId = ref(null)
 const loginInfo = reactive({
   userId: '',
   userPassword: ''
 })
 const loadingStore = useLoadingStore()
+const authStore = useAuthStore()
+const router = useRouter()
 const { log, errorLog } = useLogger()
+const goSignUp = () => {
+  router.push({ path: '/signUp' })
+}
 const signIn = async () => {
   log(loginInfo)
+  if (!loginInfo.userId.trim()) {
+    log('No Id')
+    userId.value.focus()
+    return
+  }
   loadingStore.changeLoadingStatus(true)
-  loginInfo.userId = loginInfo.userId.trim()
   try {
-    const userInfo = await loginService.signIn(loginInfo)
-    log(userInfo)
+    const response = await loginService.signIn(loginInfo)
+    log(response)
+    if (response.success) {
+      const userInfo = response.data
+      authStore.changeLoginStatus(true)
+      localStorage.setItem('code-harbor-auth', userInfo)
+      router.push({ path: '/' })
+    } else {
+      errorLog('SignIn Error: ', response.data)
+    }
   } catch (error) {
-    errorLog('SignIn Error: ', 'error')
+    errorLog('SignIn Error: ', error)
   } finally {
     loadingStore.changeLoadingStatus(false)
     loginInfo.email = ''

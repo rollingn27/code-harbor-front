@@ -1,5 +1,5 @@
 <template>
-  <div class="sign-in" v-if="showModal">
+  <div class="sign-in">
     <div class="sign-in-content">
       <img class="logo" src="@/assets/logoCodeHarbor.png" />
       <div class="code-harbor">Code Harbor</div>
@@ -10,7 +10,7 @@
       <input class="input" placeholder="Password" autocomplete="off" />
       <input class="input" placeholder="Confirm Password" autocomplete="off" />
       <button class="sign-in-button">Sign Up</button>
-      <div class="link-area">
+      <div class="link-area" @click="goSignIn">
         <div>Have An Account?</div>
         <div style="font-weight: bold">Sign In</div>
       </div>
@@ -18,27 +18,13 @@
   </div>
 </template>
 
-<script>
-import { ref } from 'vue'
-
-export default {
-  setup() {
-    const showModal = ref(true)
-
-    const openModal = () => {
-      showModal.value = true
-    }
-
-    const closeModal = () => {
-      showModal.value = false
-    }
-
-    return {
-      showModal,
-      openModal,
-      closeModal
-    }
-  }
+<script setup>
+import useLogger from '@/composables/logger'
+import { useRouter } from 'vue-router'
+const { log, errorLog } = useLogger()
+const router = useRouter()
+const goSignIn = () => {
+  router.push({ path: '/signIn' })
 }
 </script>
 

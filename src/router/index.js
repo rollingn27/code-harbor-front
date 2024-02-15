@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import { useAuthStore } from '@/stores/auth.store'
 
 const router = createRouter({
@@ -7,8 +6,8 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView,
+      name: 'main',
+      component: () => import('../views/MainPage.vue'),
       meta: { requireAuth: true }
     },
     {
@@ -27,7 +26,9 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const auth = useAuthStore()
   if (to.matched.some((routeInfo) => routeInfo.meta.requireAuth)) {
-    if (!auth.logined) {
+    const loginStatus = localStorage.getItem('code-harbor-auth')
+
+    if (loginStatus !== '로그인 성공' && !auth.logined) {
       next({ path: '/signIn' })
     } else {
       next()
