@@ -3,24 +3,39 @@
     <div class="sign-in-content">
       <img class="logo" src="@/assets/logoCodeHarbor.png" />
       <div class="code-harbor">Code Harbor</div>
+      <template v-if="!passwordCheckStatus">
+        <input
+          type="type"
+          class="input"
+          placeholder="Email Address"
+          autocomplete="off"
+          v-model="loginInfo.userId"
+          ref="userId"
+        />
+        <input
+          type="password"
+          class="input"
+          placeholder="Password"
+          autocomplete="off"
+          v-model="loginInfo.userPassword"
+        />
+      </template>
       <input
+        v-else
         type="type"
         class="input"
-        placeholder="Email Address"
+        placeholder="Enter email to find password"
         autocomplete="off"
         v-model="loginInfo.userId"
         ref="userId"
       />
-      <input
-        type="password"
-        class="input"
-        placeholder="Password"
-        autocomplete="off"
-        v-model="loginInfo.userPassword"
-      />
-      <button class="sign-in-button" @click="signIn">Sign In</button>
+      <button v-if="!passwordCheckStatus" class="sign-in-button" @click="signIn">Sign In</button>
+      <button v-else class="sign-in-button password-button" @click="sendPassword">
+        비밀번호 전송
+      </button>
       <div class="link-area">
-        <div>Forgot password?</div>
+        <div v-if="!passwordCheckStatus" @click="changeStatus">Forgot password?</div>
+        <div v-else></div>
         <div @click="goSignUp">Sign Up</div>
       </div>
     </div>
@@ -29,7 +44,7 @@
 
 <script setup>
 import { loginService } from '@/api'
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import useLogger from '@/composables/logger'
 import { useLoadingStore } from '@/stores/loading.store'
 import { useAuthStore } from '@/stores/auth.store'
@@ -43,9 +58,15 @@ const loadingStore = useLoadingStore()
 const authStore = useAuthStore()
 const router = useRouter()
 const { log, errorLog } = useLogger()
+const passwordCheckStatus = ref(false)
 const goSignUp = () => {
   router.push({ path: '/signUp' })
 }
+const changeStatus = () => {
+  passwordCheckStatus.value = true
+}
+
+const sendPassword = async () => {}
 const signIn = async () => {
   log(loginInfo)
   if (!loginInfo.userId.trim()) {
@@ -73,6 +94,9 @@ const signIn = async () => {
     loginInfo.password = ''
   }
 }
+onMounted(() => {
+  userId.value.focus()
+})
 </script>
 
 <style lang="scss" scoped>
@@ -137,6 +161,12 @@ const signIn = async () => {
   .sign-in-button:hover {
     background: #999999;
     cursor: pointer;
+  }
+  .password-button {
+    background: #a998ff;
+  }
+  .password-button:hover {
+    background: #7a5cff;
   }
   .link-area {
     color: #808080;

@@ -6,9 +6,21 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'main',
-      component: () => import('../views/MainPage.vue'),
-      meta: { requireAuth: true }
+      name: 'home',
+      component: () => import('../views/HomePage.vue'),
+      meta: { requireAuth: true },
+      children: [
+        {
+          path: '',
+          name: 'main',
+          component: () => import('../components/MainPage.vue')
+        },
+        {
+          path: 'group',
+          name: 'group',
+          component: () => import('../components/GroupPage.vue')
+        }
+      ]
     },
     {
       path: '/signIn',
