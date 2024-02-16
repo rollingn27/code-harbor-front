@@ -4,8 +4,12 @@
       <img class="logo" src="@/assets/logoCodeHarbor.png" />
       <div class="code-harbor">Code Harbor</div>
       <div class="input-box">
-        <input placeholder="Email Address" autocomplete="off" />
+        <input type="text" placeholder="Email Address" autocomplete="off" />
         <button>이메일인증</button>
+      </div>
+      <div class="input-box">
+        <input type="text" placeholder="Nickname" autocomplete="off" />
+        <button>중복확인</button>
       </div>
       <input class="input" placeholder="Password" autocomplete="off" />
       <input class="input" placeholder="Confirm Password" autocomplete="off" />
