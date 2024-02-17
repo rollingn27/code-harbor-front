@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store'
-
+import { getLocalStorage } from '@/utils/code-harbor-util.js'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -38,9 +38,8 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const auth = useAuthStore()
   if (to.matched.some((routeInfo) => routeInfo.meta.requireAuth)) {
-    const loginStatus = localStorage.getItem('code-harbor-auth')
-
-    if (loginStatus !== '로그인 성공' && !auth.logined) {
+    const codeHarborStatus = getLocalStorage('code-harbor-auth')
+    if (!codeHarborStatus && !auth.logined) {
       next({ path: '/signIn' })
     } else {
       next()
