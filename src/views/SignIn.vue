@@ -49,7 +49,12 @@ import useLogger from '@/composables/logger'
 import { useLoadingStore } from '@/stores/loading.store'
 import { useAuthStore } from '@/stores/auth.store'
 import { useRouter } from 'vue-router'
+import { setLocalStorage, getLocalStorage } from '@/utils/code-harbor-util.js'
 const userId = ref(null)
+const initialLoginInfo = {
+  userId: '',
+  userPassword: ''
+}
 const loginInfo = reactive({
   userId: '',
   userPassword: ''
@@ -81,7 +86,7 @@ const signIn = async () => {
     if (response.success) {
       const userInfo = response.data
       authStore.changeLoginStatus(true)
-      localStorage.setItem('code-harbor-auth', userInfo)
+      setLocalStorage('code-harbor-auth', userInfo)
       router.push({ path: '/' })
     } else {
       errorLog('SignIn Error: ', response.data)
@@ -90,8 +95,7 @@ const signIn = async () => {
     errorLog('SignIn Error: ', error)
   } finally {
     loadingStore.changeLoadingStatus(false)
-    loginInfo.email = ''
-    loginInfo.password = ''
+    Object.assign(loginInfo, initialLoginInfo)
   }
 }
 onMounted(() => {
