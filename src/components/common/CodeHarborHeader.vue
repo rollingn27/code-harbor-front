@@ -5,10 +5,24 @@
       <div class="code-harbor">Code Harbor <span>with algorithm</span></div>
     </div>
     <div class="header-right">
-      <div class="user-info"><span>Rolling</span>님 안녕하세요.</div>
+      <div class="user-info">
+        <span>{{ nickname }}</span
+        >님 안녕하세요.
+      </div>
     </div>
   </div>
 </template>
+<script setup>
+import { getLocalStorage } from '@/utils/code-harbor-util'
+import { onMounted, ref } from 'vue'
+
+const nickname = ref('')
+
+onMounted(() => {
+  const userInfo = getLocalStorage('code-harbor-auth')
+  nickname.value = userInfo.userNickname
+})
+</script>
 <style lang="scss" scoped>
 .code-header {
   width: 100%;
