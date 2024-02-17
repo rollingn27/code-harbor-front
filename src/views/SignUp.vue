@@ -4,16 +4,50 @@
       <img class="logo" src="@/assets/logoCodeHarbor.png" />
       <div class="code-harbor">Code Harbor</div>
       <div class="input-box">
-        <input type="text" placeholder="Email Address" autocomplete="off" />
-        <button>이메일인증</button>
+        <input
+          type="text"
+          placeholder="Email Address"
+          autocomplete="off"
+          v-model="signUpInputs.email"
+          ref="userId"
+        />
+        <button v-if="!confirmStatus.email" @click="emailCheck">이메일인증</button>
+        <img v-else class="check-img" src="@/assets/checkV.png" />
+      </div>
+      <div class="email-waiting" v-if="emailWaiting">
+        <div class="waiting-box">
+          <div>인증번호입력 :</div>
+          <input type="text" :placeholder="emailWaitingTime" v-model="confirmStatus.emailCode" />
+          <button @click="emailVerify">확인</button>
+        </div>
       </div>
       <div class="input-box">
-        <input type="text" placeholder="Nickname" autocomplete="off" />
-        <button>중복확인</button>
+        <input
+          type="text"
+          placeholder="Nickname"
+          autocomplete="off"
+          ref="nickname"
+          v-model="signUpInputs.nickname"
+        />
+        <button v-if="!confirmStatus.nickname" @click="checkNickname">중복확인</button>
+        <img v-else class="check-img" src="@/assets/checkV.png" />
       </div>
-      <input class="input" placeholder="Password" autocomplete="off" />
-      <input class="input" placeholder="Confirm Password" autocomplete="off" />
-      <button class="sign-in-button">Sign Up</button>
+      <input
+        class="input"
+        type="password"
+        placeholder="Password"
+        autocomplete="off"
+        ref="passwordRef"
+        v-model="signUpInputs.password"
+      />
+      <input
+        class="input"
+        type="password"
+        placeholder="Confirm Password"
+        autocomplete="off"
+        v-model="signUpInputs.passwordConfirm"
+      />
+      <button class="sign-in-button" @click="signUp">Sign Up</button>
       <div class="link-area" @click="goSignIn">
         <div>Have An Account?</div>
         <div style="font-weight: bold">Sign In</div>
@@ -25,11 +59,169 @@
 <script setup>
 import useLogger from '@/composables/logger'
 import { useRouter } from 'vue-router'
+import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { userService } from '@/api'
 const { log, errorLog } = useLogger()
 const router = useRouter()
+const userId = ref(null)
+const nickname = ref(null)
+const passwordRef = ref(null)
+const initialInputState = {
+  email: '',
+  nickname: '',
+  password: '',
+  passwordConfirm: ''
+}
+const signUpInputs = reactive({
+  email: '',
+  nickname: '',
+  password: '',
+  passwordConfirm: ''
+})
+const initialConfirmStatus = {
+  email: false,
+  emailCode: '',
+  nickname: false
+}
+const confirmStatus = reactive({
+  email: false,
+  emailCode: '',
+  nickname: false
+})
+const emailWaiting = ref(false)
+const emailWaitingTime = ref('05:00')
+const emailInterval = ref(null)
+const signUp = async () => {
+  if (!confirmStatus.email) {
+    alert('이메일 인증 먼저')
+    userId.value.focus()
+    return
+  }
+
+  if (!confirmStatus.nickname) {
+    alert('닉네임 중복 확인 먼저')
+    nickname.value.focus()
+    return
+  }
+
+  if (!signUpInputs.password.trim()) {
+    alert('비번을 입력하세요')
+    return
+  }
+
+  if (signUpInputs.password !== signUpInputs.passwordConfirm) {
+    alert('입력하신 비밀 번호가 다릅니다.')
+    return
+  }
+  log(signUpInputs)
+  try {
+    const response = await userService.signupBasic({
+      userId: signUpInputs.email,
+      userNickname: signUpInputs.nickname,
+      userPassword: signUpInputs.password
+    })
+
+    if (response.success) {
+      alert('회원가입에 성공하였습니다. 로그인해 주세요')
+      goSignIn()
+    } else {
+      alert(response.data)
+    }
+  } catch (error) {
+    errorLog(error)
+  } finally {
+    Object.assign(signUpInputs, initialInputState)
+    Object.assign(confirmStatus, initialConfirmStatus)
+  }
+}
+const startWaiting = () => {
+  let time = 5 * 60
+  emailInterval.value = setInterval(() => {
+    let minutes = Math.floor(time / 60)
+    let seconds = time % 60
+    let formattedMinutes = minutes.toString().padStart(2, '0')
+    let formattedSeconds = seconds.toString().padStart(2, '0')
+    emailWaitingTime.value = `${formattedMinutes}:${formattedSeconds}`
+    time--
+
+    if (time < 0) {
+      clearInterval(emailInterval.value)
+      emailWaitingTime.value = '00:00'
+    }
+  }, 1000)
+}
+const checkNickname = async () => {
+  log(signUpInputs.nickname)
+  try {
+    const response = await userService.checkNickname({
+      userNickname: signUpInputs.nickname
+    })
+
+    if (response.success) {
+      confirmStatus.nickname = true
+      passwordRef.value.focus()
+    } else {
+      alert(response.data)
+    }
+  } catch (error) {
+    errorLog(error)
+  }
+}
+const emailVerify = async () => {
+  log(confirmStatus.emailCode)
+  try {
+    const response = await userService.verifyCode({
+      userId: signUpInputs.email,
+      verifyCode: confirmStatus.emailCode
+    })
+
+    if (response.success) {
+      confirmStatus.email = true
+      clearInterval(emailInterval.value)
+      emailWaiting.value = false
+      nickname.value.focus()
+    } else {
+      alert(response.data)
+    }
+    log(response)
+  } catch (error) {
+    errorLog(error)
+  } finally {
+    confirmStatus.emailCode = ''
+  }
+}
+const emailCheck = async () => {
+  log(signUpInputs.email)
+  if (!signUpInputs.email.trim()) {
+    userId.value.focus()
+    return
+  }
+
+  try {
+    const response = await userService.checkId({ userId: signUpInputs.email })
+    log(response)
+
+    if (response.success) {
+      emailWaiting.value = true
+      startWaiting()
+    } else {
+      alert(response.data)
+      return
+    }
+  } catch (error) {
+    errorLog(error)
+  }
+}
 const goSignIn = () => {
   router.push({ path: '/signIn' })
 }
+
+onMounted(() => {
+  userId.value.focus()
+})
+onBeforeUnmount(() => {
+  clearInterval(emailInterval.value)
+})
 </script>
 
 <style lang="scss" scoped>
@@ -67,6 +259,44 @@ const goSignIn = () => {
     font-size: 2rem;
     font-weight: 600;
   }
+  .email-waiting {
+    width: 36.625rem;
+    height: 2rem;
+    display: flex;
+    margin: 0 auto 1.75rem auto;
+    justify-content: flex-end;
+    align-items: center;
+    .waiting-box {
+      display: flex;
+      input,
+      button {
+        all: unset;
+      }
+      input {
+        border: 1px solid black;
+        margin-left: 1rem;
+        max-width: 5rem;
+        margin-right: 0.75rem;
+        border-radius: 3px;
+        padding-left: 3rem;
+      }
+      input::placeholder {
+        text-align: right;
+        margin-right: 1.5rem;
+      }
+
+      button {
+        background: #4686f7;
+        border-radius: 5px;
+        padding: 0 0.5rem;
+        color: white;
+      }
+      button:hover {
+        background: blue;
+        cursor: pointer;
+      }
+    }
+  }
   .input-box {
     width: 36.625rem;
     height: 4.5rem;
@@ -101,6 +331,11 @@ const goSignIn = () => {
     button:hover {
       background: blue;
       cursor: pointer;
+    }
+    .check-img {
+      margin: auto 2rem auto 0;
+      width: 3rem;
+      height: 3rem;
     }
   }
   .input {
