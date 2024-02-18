@@ -43,7 +43,7 @@
 </template>
 
 <script setup>
-import { loginService } from '@/api'
+import { loginService, userService } from '@/api'
 import { onMounted, reactive, ref } from 'vue'
 import useLogger from '@/composables/logger'
 import { useLoadingStore } from '@/stores/loading.store'
@@ -71,7 +71,22 @@ const changeStatus = () => {
   passwordCheckStatus.value = true
 }
 
-const sendPassword = async () => {}
+const sendPassword = async () => {
+  log(loginInfo.userId)
+  try {
+    const response = await userService.findPassword({
+      userId: loginInfo.userId
+    })
+    log(response)
+    if (response.success) {
+      alert(response.data.msg)
+    } else {
+      alert(response.data.msg)
+    }
+  } catch (error) {
+    errorLog(error)
+  }
+}
 const signIn = async () => {
   log(loginInfo)
   if (!loginInfo.userId.trim()) {

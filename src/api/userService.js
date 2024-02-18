@@ -1,9 +1,37 @@
 import axios from 'axios'
+import { useLoadingStore } from '@/stores/loading.store.js'
 
+const loadingStore = useLoadingStore()
 const baseURL = 'http://localhost:8081/userCrud'
 const axiosInstance = axios.create({
   baseURL
 })
+
+axiosInstance.interceptors.request.use(
+  (config) => {
+    loadingStore.changeLoadingStatus(true)
+    console.log(loadingStore.isLoading)
+    return config
+  },
+  (error) => {
+    loadingStore.changeLoadingStatus(false)
+    console.log(loadingStore.isLoading)
+    return Promise.reject(error)
+  }
+)
+
+axiosInstance.interceptors.response.use(
+  (response) => {
+    loadingStore.changeLoadingStatus(false)
+    console.log(loadingStore.isLoading)
+    return response
+  },
+  (error) => {
+    loadingStore.changeLoadingStatus(false)
+    console.log(loadingStore.isLoading)
+    return Promise.reject(error)
+  }
+)
 
 const checkId = async (params) => {
   try {
@@ -40,4 +68,13 @@ const signupBasic = async (params) => {
     throw error
   }
 }
-export { checkId, verifyCode, checkNickname, signupBasic }
+
+const findPassword = async (params) => {
+  try {
+    const response = await axiosInstance.post('/findPassword', params)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+export { checkId, verifyCode, checkNickname, signupBasic, findPassword }
