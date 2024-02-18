@@ -57,15 +57,16 @@
 </template>
 
 <script setup>
-import useLogger from '@/composables/logger'
-import { useRouter } from 'vue-router'
-import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { userService } from '@/api'
+import useLogger from '@/composables/logger'
+import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 const { log, errorLog } = useLogger()
 const router = useRouter()
 const userId = ref(null)
 const nickname = ref(null)
 const passwordRef = ref(null)
+
 const initialInputState = {
   email: '',
   nickname: '',
@@ -152,6 +153,10 @@ const startWaiting = () => {
 }
 const checkNickname = async () => {
   log(signUpInputs.nickname)
+  if (!signUpInputs.nickname) {
+    nickname.value.focus()
+    return
+  }
   try {
     const response = await userService.checkNickname({
       userNickname: signUpInputs.nickname
