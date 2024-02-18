@@ -10,12 +10,10 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     loadingStore.changeLoadingStatus(true)
-    console.log(loadingStore.isLoading)
     return config
   },
   (error) => {
     loadingStore.changeLoadingStatus(false)
-    console.log(loadingStore.isLoading)
     return Promise.reject(error)
   }
 )
@@ -23,12 +21,10 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => {
     loadingStore.changeLoadingStatus(false)
-    console.log(loadingStore.isLoading)
     return response
   },
   (error) => {
     loadingStore.changeLoadingStatus(false)
-    console.log(loadingStore.isLoading)
     return Promise.reject(error)
   }
 )
