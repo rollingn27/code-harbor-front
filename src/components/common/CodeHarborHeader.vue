@@ -37,14 +37,16 @@ onMounted(() => {
     width: 50%;
     overflow: hidden;
     color: #808080;
+    height: 90px;
   }
   .header-left {
     display: flex;
+
     .code-harbor {
       font-size: 3rem;
-
       font-weight: bold;
-      margin: auto 0 0 0;
+      height: 100%;
+      line-height: 100px;
       span {
         font-size: 1.25rem;
       }
