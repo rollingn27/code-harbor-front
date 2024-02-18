@@ -137,6 +137,7 @@ const signUp = async () => {
 }
 const startWaiting = () => {
   let time = 5 * 60
+
   emailInterval.value = setInterval(() => {
     let minutes = Math.floor(time / 60)
     let seconds = time % 60
@@ -200,6 +201,10 @@ const emailCheck = async () => {
   if (!signUpInputs.email.trim()) {
     userId.value.focus()
     return
+  }
+  if (emailInterval.value) {
+    clearInterval(emailInterval.value)
+    emailWaitingTime.value = ''
   }
 
   try {
