@@ -15,7 +15,7 @@
         <div class="img-box">
           <img src="@/assets/arrowRight.png" />
         </div>
-        <div class="content-text">Code Harbor 알아보기(물음표 아이콘 클릭)</div>
+        <div class="content-text cursor-help">Code Harbor 알아보기(물음표 아이콘 클릭)</div>
       </div>
     </div>
   </div>
@@ -34,6 +34,7 @@ const groupCreate = () => {
   margin: 4.5rem;
   width: 80vw;
   height: 40rem;
+  background: #e4f3f8;
   .make-plan {
     position: relative;
     text-align: end;
@@ -47,7 +48,7 @@ const groupCreate = () => {
     margin: 2rem auto;
     text-align: left;
     font-size: 2rem;
-    color: #808080;
+    color: #666666;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
     font-weight: bold;
   }
