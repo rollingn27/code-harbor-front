@@ -1,7 +1,7 @@
 <template>
   <div class="code-header">
     <div class="header-left">
-      <img src="@/assets/logoCodeHarbor.png" alt="code harbor" />
+      <img src="@/assets/logoCodeHarbor.png" alt="code harbor" @click="clickLogo" />
       <div class="code-harbor">Code Harbor <span>with algorithm</span></div>
     </div>
     <div class="header-right">
@@ -15,9 +15,12 @@
 <script setup>
 import { getLocalStorage } from '@/utils/code-harbor-util'
 import { onMounted, ref } from 'vue'
-
+import { useRouter } from 'vue-router'
 const nickname = ref('')
-
+const router = useRouter()
+const clickLogo = () => {
+  router.push({ path: '/' })
+}
 onMounted(() => {
   const userInfo = getLocalStorage('code-harbor-auth')
   nickname.value = userInfo.userNickname
