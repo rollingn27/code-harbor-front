@@ -1,4 +1,12 @@
 <template>
+  <v-dialog v-model="dialog.status" width="35rem">
+    <v-card>
+      <v-card-text> {{ dialog.text }}</v-card-text>
+      <v-card-actions class="justify-end">
+        <v-btn color="warning" @click="closeDialog">{{ dialog.buttonText }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <div class="sign-in">
     <div class="sign-in-content">
       <img class="logo" src="@/assets/logoCodeHarbor.png" />
@@ -89,29 +97,42 @@ const confirmStatus = reactive({
   emailCode: '',
   nickname: false
 })
+const dialog = reactive({
+  status: false,
+  text: '',
+  buttonText: '확인'
+})
+const closeDialog = () => {
+  dialog.status = false
+  if (dialog.type === 'success') {
+    goSignIn()
+  }
+}
 const emailWaiting = ref(false)
 const emailWaitingTime = ref('05:00')
 const emailInterval = ref(null)
 const signUp = async () => {
   if (!confirmStatus.email) {
-    alert('이메일 인증 먼저')
-    userId.value.focus()
+    dialog.status = true
+    dialog.text = '이메일 인증을 먼저 하세요.'
     return
   }
 
   if (!confirmStatus.nickname) {
-    alert('닉네임 중복 확인 먼저')
-    nickname.value.focus()
+    dialog.status = true
+    dialog.text = '닉네임 중복 확인을 먼저 먼저 하세요.'
     return
   }
 
   if (!signUpInputs.password.trim()) {
-    alert('비번을 입력하세요')
+    dialog.status = true
+    dialog.text = '비밀번호를 입력하세요.'
     return
   }
 
   if (signUpInputs.password !== signUpInputs.passwordConfirm) {
-    alert('입력하신 비밀 번호가 다릅니다.')
+    dialog.status = true
+    dialog.text = '입력하신 비밀번호가 다릅니다.'
     return
   }
   log(signUpInputs)
@@ -123,10 +144,12 @@ const signUp = async () => {
     })
 
     if (response.success) {
-      alert('회원가입에 성공하였습니다. 로그인해 주세요')
-      goSignIn()
+      dialog.status = true
+      dialog.text = '회원가입에 성공하였습니다. 로그인해 주세요.'
+      dialog.type = 'success'
     } else {
-      alert(response.data)
+      dialog.status = true
+      dialog.text = response.data.msg
     }
   } catch (error) {
     errorLog(error)
@@ -155,7 +178,8 @@ const startWaiting = () => {
 const checkNickname = async () => {
   log(signUpInputs.nickname)
   if (!signUpInputs.nickname) {
-    nickname.value.focus()
+    dialog.status = true
+    dialog.text = '닉네임을 입력하세요.'
     return
   }
   try {
@@ -165,9 +189,11 @@ const checkNickname = async () => {
 
     if (response.success) {
       confirmStatus.nickname = true
-      passwordRef.value.focus()
+      dialog.status = true
+      dialog.text = response.data.msg
     } else {
-      alert(response.data)
+      dialog.status = true
+      dialog.text = response.data.msg
     }
   } catch (error) {
     errorLog(error)
@@ -175,6 +201,11 @@ const checkNickname = async () => {
 }
 const emailVerify = async () => {
   log(confirmStatus.emailCode)
+  if (!confirmStatus.emailCode) {
+    dialog.status = true
+    dialog.text = '인증번호를 입력하세요.'
+    return
+  }
   try {
     const response = await userService.verifyCode({
       userId: signUpInputs.email,
@@ -182,12 +213,14 @@ const emailVerify = async () => {
     })
 
     if (response.success) {
+      dialog.status = true
+      dialog.text = response.data.msg
       confirmStatus.email = true
       clearInterval(emailInterval.value)
       emailWaiting.value = false
-      nickname.value.focus()
     } else {
-      alert(response.data)
+      dialog.status = true
+      dialog.text = response.data.msg
     }
     log(response)
   } catch (error) {
@@ -199,7 +232,8 @@ const emailVerify = async () => {
 const emailCheck = async () => {
   log(signUpInputs.email)
   if (!signUpInputs.email.trim()) {
-    userId.value.focus()
+    dialog.status = true
+    dialog.text = '이메일을 입력하세요.'
     return
   }
   if (emailInterval.value) {
@@ -213,9 +247,12 @@ const emailCheck = async () => {
 
     if (response.success) {
       emailWaiting.value = true
+      dialog.status = true
+      dialog.text = response.data.msg
       startWaiting()
     } else {
-      alert(response.data)
+      dialog.status = true
+      dialog.text = response.data.msg
       return
     }
   } catch (error) {
