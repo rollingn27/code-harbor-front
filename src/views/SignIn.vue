@@ -1,4 +1,12 @@
 <template>
+  <v-dialog v-model="dialog.status" width="35rem">
+    <v-card>
+      <v-card-text> {{ dialog.text }}</v-card-text>
+      <v-card-actions class="justify-end">
+        <v-btn color="warning" @click="closeDialog">{{ dialog.buttonText }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <div class="sign-in">
     <div class="sign-in-content">
       <img class="logo" src="@/assets/logoCodeHarbor.png" />
@@ -12,12 +20,14 @@
           v-model="loginInfo.userId"
           ref="userId"
         />
+
         <input
           type="password"
           class="input"
           placeholder="Password"
           autocomplete="off"
           v-model="loginInfo.userPassword"
+          ref="userPassword"
         />
       </template>
       <input
@@ -35,7 +45,7 @@
       </button>
       <div class="link-area">
         <div v-if="!passwordCheckStatus" @click="changeStatus">Forgot password?</div>
-        <div v-else></div>
+        <div v-else @click="goSignIn">Sign In</div>
         <div @click="goSignUp">Sign Up</div>
       </div>
     </div>
@@ -46,11 +56,11 @@
 import { loginService, userService } from '@/api'
 import { onMounted, reactive, ref } from 'vue'
 import useLogger from '@/composables/logger'
-import { useLoadingStore } from '@/stores/loading.store'
 import { useAuthStore } from '@/stores/auth.store'
 import { useRouter } from 'vue-router'
 import { setLocalStorage, getLocalStorage } from '@/utils/code-harbor-util.js'
 const userId = ref(null)
+const userPassword = ref(null)
 const initialLoginInfo = {
   userId: '',
   userPassword: ''
@@ -59,11 +69,19 @@ const loginInfo = reactive({
   userId: '',
   userPassword: ''
 })
-const loadingStore = useLoadingStore()
+
 const authStore = useAuthStore()
 const router = useRouter()
 const { log, errorLog } = useLogger()
 const passwordCheckStatus = ref(false)
+
+const dialog = reactive({
+  status: false,
+  text: '',
+  buttonText: '확인',
+  type: ''
+})
+
 const goSignUp = () => {
   router.push({ path: '/signUp' })
 }
@@ -71,17 +89,32 @@ const changeStatus = () => {
   passwordCheckStatus.value = true
 }
 
+const closeDialog = () => {
+  dialog.status = false
+}
+
+const goSignIn = () => {
+  passwordCheckStatus.value = false
+}
+
 const sendPassword = async () => {
   log(loginInfo.userId)
+  if (!loginInfo.userId.trim()) {
+    dialog.status = true
+    dialog.text = '이메일(아이디)를 입력하세요'
+    return
+  }
   try {
     const response = await userService.findPassword({
       userId: loginInfo.userId
     })
     log(response)
     if (response.success) {
-      alert(response.data.msg)
+      dialog.status = true
+      dialog.text = response.data.msg
     } else {
-      alert(response.data.msg)
+      dialog.status = true
+      dialog.text = response.data.msg
     }
   } catch (error) {
     errorLog(error)
@@ -90,11 +123,16 @@ const sendPassword = async () => {
 const signIn = async () => {
   log(loginInfo)
   if (!loginInfo.userId.trim()) {
-    log('No Id')
-    userId.value.focus()
+    dialog.status = true
+    dialog.text = '이메일(아이디)를 입력하세요.'
     return
   }
-  loadingStore.changeLoadingStatus(true)
+  if (!loginInfo.userPassword.trim()) {
+    dialog.status = true
+    dialog.text = '패스워드를 입력하세요.'
+    return
+  }
+
   try {
     const response = await loginService.signIn(loginInfo)
     log(response)
@@ -105,11 +143,12 @@ const signIn = async () => {
       router.push({ path: '/' })
     } else {
       errorLog('SignIn Error: ', response.data)
+      dialog.status = true
+      dialog.text = response.data.msg
     }
   } catch (error) {
     errorLog('SignIn Error: ', error)
   } finally {
-    loadingStore.changeLoadingStatus(false)
     Object.assign(loginInfo, initialLoginInfo)
   }
 }
@@ -166,6 +205,7 @@ onMounted(() => {
     font-size: 1.5rem;
     padding: 0.75rem 1.75rem;
   }
+
   .sign-in-button {
     all: unset;
     width: 36.625rem;
