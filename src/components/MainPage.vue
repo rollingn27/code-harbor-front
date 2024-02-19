@@ -31,8 +31,8 @@ const groupCreate = () => {
 .main-page {
   border-radius: 5px;
   box-shadow: 3px 3px 7px rgba(46, 44, 40, 0.5);
-  margin-left: 2rem;
-  width: 85vw;
+  margin: 4.5rem;
+  width: 80vw;
   height: 40rem;
   .make-plan {
     position: relative;
@@ -43,16 +43,18 @@ const groupCreate = () => {
   }
 
   .main-description {
-    width: 70vw;
+    width: 65vw;
     margin: 2rem auto;
+    text-align: left;
     font-size: 2rem;
     color: #808080;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
     font-weight: bold;
   }
   .main-content {
-    width: 70vw;
+    width: 60vw;
     margin: 3rem auto;
+
     .content-box {
       display: flex;
       flex-direction: row;
