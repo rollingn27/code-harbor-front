@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useLoadingStore } from '@/stores/loading.store.js'
+import { removeLocalStorage } from '@/utils/code-harbor-util.js'
 
 const loadingStore = useLoadingStore()
 const baseURL = 'http://localhost:8081/login'
@@ -37,4 +38,12 @@ const signIn = async (params) => {
     throw error
   }
 }
-export { signIn }
+
+const signOut = () => {
+  try {
+    removeLocalStorage('code-harbor-auth')
+  } catch (error) {
+    throw error
+  }
+}
+export { signIn, signOut }
