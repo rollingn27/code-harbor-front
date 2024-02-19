@@ -12,16 +12,24 @@
         <img src="@/assets/sidebarIcon/knowhow.png" alt="노하우" />
       </div>
       <div class="img-box">
-        <img src="@/assets/sidebarIcon/help.png" alt="help" />
+        <img class="cursor-help" src="@/assets/sidebarIcon/help.png" alt="help" />
       </div>
-      <div class="img-box">
+      <div class="img-box" @click="signOut">
         <img src="@/assets/sidebarIcon/logout.png" alt="log out" />
       </div>
     </div>
     <router-view></router-view>
   </div>
 </template>
-<script setup></script>
+<script setup>
+import { loginService } from '@/api'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const signOut = () => {
+  loginService.signOut()
+  router.push({ path: '/signIn' })
+}
+</script>
 <style lang="scss" scoped>
 .code-harbor-main {
   display: flex;
