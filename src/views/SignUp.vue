@@ -18,6 +18,7 @@
           autocomplete="off"
           v-model="signUpInputs.email"
           ref="userId"
+          :disabled="confirmStatus.email"
         />
         <button v-if="!confirmStatus.email" @click="emailCheck">이메일인증</button>
         <img v-else class="check-img" src="@/assets/checkV.png" />
@@ -36,6 +37,7 @@
           autocomplete="off"
           ref="nickname"
           v-model="signUpInputs.nickname"
+          :disabled="confirmStatus.nickname"
         />
         <button v-if="!confirmStatus.nickname" @click="checkNickname">중복확인</button>
         <img v-else class="check-img" src="@/assets/checkV.png" />

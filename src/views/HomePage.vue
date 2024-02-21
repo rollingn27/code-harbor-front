@@ -74,7 +74,6 @@ const onSignOut = () => {
   height: 50rem;
   .side-bar {
     margin-left: 7.25rem;
-    width: 6rem;
     border-radius: 5px;
     box-shadow: 0px 0px 10px rgba(92, 88, 81, 0.5);
     .img-box {
@@ -90,6 +89,9 @@ const onSignOut = () => {
         height: 4rem;
         cursor: pointer;
       }
+    }
+    .img-box:hover {
+      background: rgb(238, 218, 234);
     }
   }
 }
