@@ -56,6 +56,7 @@
         placeholder="Confirm Password"
         autocomplete="off"
         v-model="signUpInputs.passwordConfirm"
+        @keydown.enter="signUp"
       />
       <button class="sign-in-button" @click="signUp">Sign Up</button>
       <div class="link-area" @click="goSignIn">

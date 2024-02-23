@@ -3,7 +3,7 @@
     <v-card>
       <v-card-text> {{ dialog.text }}</v-card-text>
       <v-card-actions class="justify-end">
-        <v-btn color="warning" @click="closeDialog">{{ dialog.buttonText }}</v-btn>
+        <v-btn color="warning" @click="closeDialog">확인</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -28,6 +28,7 @@
           autocomplete="off"
           v-model="loginInfo.userPassword"
           ref="userPassword"
+          @keydown.enter="signIn"
         />
       </template>
       <input
@@ -54,11 +55,11 @@
 
 <script setup>
 import { loginService, userService } from '@/api'
-import { onMounted, reactive, ref } from 'vue'
 import useLogger from '@/composables/logger'
 import { useAuthStore } from '@/stores/auth.store'
+import { setLocalStorage } from '@/utils/code-harbor-util.js'
+import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { setLocalStorage, getLocalStorage } from '@/utils/code-harbor-util.js'
 const userId = ref(null)
 const userPassword = ref(null)
 const initialLoginInfo = {
@@ -78,7 +79,6 @@ const passwordCheckStatus = ref(false)
 const dialog = reactive({
   status: false,
   text: '',
-  buttonText: '확인',
   type: ''
 })
 
