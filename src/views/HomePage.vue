@@ -13,7 +13,7 @@
   </v-dialog>
   <div class="code-harbor-main">
     <div class="side-bar">
-      <div class="img-box">
+      <div class="img-box" @click="goShare">
         <img src="@/assets/sidebarIcon/shareproblem.png" alt="문제 공유" />
         <v-tooltip activator="parent" location="end">문제공유 페이지</v-tooltip>
       </div>
@@ -22,8 +22,8 @@
         <v-tooltip activator="parent" location="end">통계 페이지</v-tooltip>
       </div>
       <div class="img-box">
-        <img src="@/assets/sidebarIcon/knowhow.png" alt="노하우" />
-        <v-tooltip activator="parent" location="end">알고리즘 노하우 공유</v-tooltip>
+        <img src="@/assets/sidebarIcon/invite.png" alt="그룹초대" />
+        <v-tooltip activator="parent" location="end">그룹에 친구 초대</v-tooltip>
       </div>
       <div class="img-box">
         <img class="cursor-help" src="@/assets/sidebarIcon/help.png" alt="help" />
@@ -65,6 +65,10 @@ const onSignOut = () => {
   dialog.text = '로그아웃 하시겠습니까?'
   dialog.buttonText1 = 'ok'
   dialog.buttonText2 = 'cancel'
+}
+
+const goShare = () => {
+  router.push({ path: '/share' })
 }
 </script>
 <style lang="scss" scoped>
