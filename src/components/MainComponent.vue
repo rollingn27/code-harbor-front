@@ -7,7 +7,7 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <div class="main-page" v-if="userStore.userInfo.userGroupname">
+  <div class="main-page" v-if="!userStore.userInfo.userGroupname">
     <div class="main-description">
       아직 속한 group이 없으시네요. <br />code harbor를 이용하려면 소속 group이 있어야 합니다.
     </div>
