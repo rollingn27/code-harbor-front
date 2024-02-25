@@ -7,7 +7,7 @@
     <div class="header-right">
       <div class="user-info">
         <span class="user-nickname">{{ loginUser.userNickname }}님</span>
-        <v-badge content="2" color="error">
+        <v-badge content="2" color="error" class="badge-class">
           <v-icon>mdi-bell-outline</v-icon>
           <v-card v-if="false" class="mx-auto noti-class" min-width="400">
             <v-list lines="three">
@@ -35,7 +35,7 @@
 import { getLocalStorage } from '@/utils/code-harbor-util'
 import { onMounted, onUpdated, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { userService } from '@/api'
+import { loginService } from '@/api'
 import useLogger from '@/composables/logger'
 import { useUserStore } from '@/stores/user.store'
 const { log, errorLog } = useLogger()
@@ -50,7 +50,7 @@ const updateUser = async () => {
   const userId = userInfo.userId
 
   try {
-    const response = await userService.latestUserInfo({ userId })
+    const response = await loginService.latestUserInfo({ userId })
     const user = response.data
     log(response)
     userStore.setUserInfo(user.userId, user.userNickname, user.userGroupname)
@@ -122,5 +122,8 @@ onUpdated(async () => {
   top: 45px;
   z-index: 10;
   right: 0px;
+}
+.badge-class {
+  cursor: pointer;
 }
 </style>

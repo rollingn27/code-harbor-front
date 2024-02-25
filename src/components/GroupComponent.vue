@@ -4,7 +4,7 @@
       <v-row justify="center" class="mb-6">
         <v-col v-for="(_, n) in 2" :key="n" cols="auto">
           <v-card
-            width="400"
+            width="460"
             class="group-radius"
             :class="['d-flex flex-column justify-center align-center']"
           >
@@ -19,27 +19,12 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-row justify="center" class="mb-6">
-        <v-col v-for="(_, n) in 2" :key="n" cols="auto">
-          <v-card width="400" :class="['d-flex flex-column justify-center align-center ']">
-            <v-card-item>
-              <div class="text-h2 mb-1">그룹이름</div>
-              <div class="text-h6">
-                <div>인원수 : 00명</div>
-                <div>Since 2023. 12. 20</div>
-              </div>
-            </v-card-item>
-            <v-card-actions>
-              <v-btn v-if="false">가입하기</v-btn> <v-btn>가입하기</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
     </v-container>
   </div>
 </template>
 
 <script setup></script>
+
 <style lang="scss" scoped>
 .main-page {
   border-radius: 5px;

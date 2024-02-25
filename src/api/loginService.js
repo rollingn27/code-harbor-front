@@ -3,7 +3,7 @@ import { useLoadingStore } from '@/stores/loading.store.js'
 import { removeLocalStorage } from '@/utils/code-harbor-util.js'
 
 const loadingStore = useLoadingStore()
-const baseURL = 'http://localhost:8081/login'
+const baseURL = 'http://localhost:8081/auth'
 const axiosInstance = axios.create({
   baseURL
 })
@@ -32,7 +32,16 @@ axiosInstance.interceptors.response.use(
 
 const signIn = async (params) => {
   try {
-    const response = await axiosInstance.post('/basic', params)
+    const response = await axiosInstance.post('/basicLogIn', params)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+const latestUserInfo = async (params) => {
+  try {
+    const response = await axiosInstance.post('/latestUserInfo', params)
     return response.data
   } catch (error) {
     throw error
@@ -46,4 +55,4 @@ const signOut = () => {
     throw error
   }
 }
-export { signIn, signOut }
+export { signIn, signOut, latestUserInfo }

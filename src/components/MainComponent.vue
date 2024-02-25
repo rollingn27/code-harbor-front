@@ -23,7 +23,7 @@
         <div class="img-box">
           <img src="@/assets/arrowRight.png" />
         </div>
-        <div class="content-text cursor-help">Code Harbor 알아보기(물음표 아이콘 클릭)</div>
+        <div class="content-text cursor-help" @click="goHelp">Code Harbor 알아보기</div>
       </div>
     </div>
   </div>
@@ -131,6 +131,8 @@ import { onMounted, reactive, ref } from 'vue'
 import { useUserStore } from '@/stores/user.store'
 import { computed } from 'vue'
 import GroupMakeDialog from './dialogs/GroupMakeDialog.vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const temp = ref(false)
 const selected = ref(['John', 'Jacob5', 'Jacob7'])
 const tasks = reactive([
@@ -178,6 +180,10 @@ const onGroupDialog = () => {
 }
 const onCloseGroupDialog = () => {
   groupDialogVisible.value = false
+}
+
+const goHelp = () => {
+  router.push('/help')
 }
 </script>
 <style lang="scss" scoped>
