@@ -73,6 +73,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import GroupMakeDialog from './dialogs/GroupMakeDialog.vue'
 
 const groupDialogVisible = ref(false)
 const router = useRouter()
