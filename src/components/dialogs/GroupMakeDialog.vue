@@ -74,7 +74,8 @@ const createGroup = async () => {
   try {
     const response = await groupService.createGroup({
       groupCreator: userStore.userInfo.userId,
-      groupName: groupDialog.groupName
+      groupName: groupDialog.groupName,
+      isChecked: true
     })
     log(response)
     dialog.setDialog(response.data.msg)
