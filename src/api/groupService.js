@@ -38,4 +38,22 @@ const createGroup = async (params) => {
   }
 }
 
-export { createGroup }
+const inviteGroup = async (params) => {
+  try {
+    const response = await axiosInstance.post('/inviteGroup', params)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+const checkGroupName = async (params) => {
+  try {
+    const response = await axiosInstance.post('/checkGroupName', params)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+export { createGroup, inviteGroup, checkGroupName }
