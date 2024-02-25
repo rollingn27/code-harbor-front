@@ -7,7 +7,6 @@ import App from './App.vue'
 import router from './router'
 import LoadingBar from '@/components/common/LoadingBar.vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
-import CodeHarborHeader from '@/components/common/CodeHarborHeader.vue'
 // Vuetify
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
@@ -25,6 +24,5 @@ app.use(createPinia())
 app.use(router)
 app.component('loading-bar', LoadingBar)
 app.component('loading-spinner', LoadingSpinner)
-app.component('code-harbor-header', CodeHarborHeader)
 app.use(vuetify)
 app.mount('#app')

@@ -13,12 +13,22 @@ const router = createRouter({
         {
           path: '',
           name: 'main',
-          component: () => import('../components/MainPage.vue')
+          component: () => import('../components/MainComponent.vue')
         },
         {
-          path: 'group',
+          path: '/share',
+          name: 'share',
+          component: () => import('../components/ShareComponent.vue')
+        },
+        {
+          path: '/help',
+          name: 'help',
+          component: () => import('../components/HelpComponent.vue')
+        },
+        {
+          path: '/group',
           name: 'group',
-          component: () => import('../components/GroupPage.vue')
+          component: () => import('../components/GroupComponent.vue')
         }
       ]
     },
