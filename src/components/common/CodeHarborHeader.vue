@@ -6,24 +6,64 @@
     </div>
     <div class="header-right">
       <div class="user-info">
-        <span>{{ nickname }}</span
-        >님 안녕하세요.
+        <span class="user-nickname">{{ loginUser.userNickname }}님</span>
+        <v-badge content="2" color="error">
+          <v-icon>mdi-bell-outline</v-icon>
+          <v-card v-if="false" class="mx-auto noti-class" min-width="400">
+            <v-list lines="three">
+              <v-list-subheader>Notifications</v-list-subheader>
+              <v-list-item>
+                <v-list-item-title>Content filtering</v-list-item-title>
+                <v-list-item-subtitle>
+                  Set the content filtering level to restrict appts that can be downloaded
+                </v-list-item-subtitle>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title>Password</v-list-item-title>
+                <v-list-item-subtitle>
+                  Require password for purchase or use password to restrict purchase
+                </v-list-item-subtitle>
+              </v-list-item>
+            </v-list>
+          </v-card>
+        </v-badge>
       </div>
     </div>
   </div>
 </template>
 <script setup>
 import { getLocalStorage } from '@/utils/code-harbor-util'
-import { onMounted, ref } from 'vue'
+import { onMounted, onUpdated, ref } from 'vue'
 import { useRouter } from 'vue-router'
-const nickname = ref('')
+import { userService } from '@/api'
+import useLogger from '@/composables/logger'
+import { useUserStore } from '@/stores/user.store'
+const { log, errorLog } = useLogger()
+const userStore = useUserStore()
 const router = useRouter()
 const clickLogo = () => {
   router.push({ path: '/' })
 }
-onMounted(() => {
+const loginUser = userStore.userInfo
+const updateUser = async () => {
   const userInfo = getLocalStorage('code-harbor-auth')
-  nickname.value = userInfo.userNickname
+  const userId = userInfo.userId
+
+  try {
+    const response = await userService.latestUserInfo({ userId })
+    const user = response.data
+    log(response)
+    userStore.setUserInfo(user.userId, user.userNickname, user.userGroupname)
+  } catch (error) {
+    errorLog(error)
+  }
+}
+onMounted(async () => {
+  await updateUser()
+})
+
+onUpdated(async () => {
+  await updateUser()
 })
 </script>
 <style lang="scss" scoped>
@@ -38,9 +78,9 @@ onMounted(() => {
   .header-left,
   .header-right {
     width: 50%;
-    overflow: hidden;
     color: #808080;
     height: 90px;
+    margin-right: 2rem;
   }
   .header-left {
     display: flex;
@@ -73,5 +113,14 @@ onMounted(() => {
   left: 2%;
   width: 96%;
   border-bottom: 1px solid #808080;
+}
+.user-nickname {
+  margin-right: 0.5rem;
+}
+.noti-class {
+  position: absolute;
+  top: 45px;
+  z-index: 10;
+  right: 0px;
 }
 </style>

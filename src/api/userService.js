@@ -73,4 +73,13 @@ const findPassword = async (params) => {
     throw error
   }
 }
-export { checkId, verifyCode, checkNickname, signupBasic, findPassword }
+
+const latestUserInfo = async (params) => {
+  try {
+    const response = await axiosInstance.post('/latestUserInfo', params)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+export { checkId, verifyCode, checkNickname, signupBasic, findPassword, latestUserInfo }
