@@ -5,13 +5,18 @@ export const useUserStore = defineStore('user', () => {
   const userInfo = reactive({
     userId: '',
     userNickname: '',
-    userGroupname: ''
+    userGroupStatus: {
+      groupStatus: 0,
+      userGroupName: ''
+    },
+    newMessageList: []
   })
 
-  const setUserInfo = (userId, userNickname, userGroupName) => {
+  const setUserInfo = (userId, userNickname, userGroupStatus, newMessageList) => {
     userInfo.userId = userId
     userInfo.userNickname = userNickname
-    userInfo.userGroupname = userGroupName
+    userInfo.userGroupStatus = userGroupStatus
+    userInfo.newMessageList = newMessageList
   }
   return { userInfo, setUserInfo }
 })

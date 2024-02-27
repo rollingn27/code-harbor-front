@@ -7,7 +7,7 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <div class="main-page" v-if="!userStore.userInfo.userGroupname">
+  <div class="main-page" v-if="userInfo.userGroupStatus.groupStatus !== 1">
     <div class="main-description">
       아직 속한 group이 없으시네요. <br />code harbor를 이용하려면 소속 group이 있어야 합니다.
     </div>
@@ -27,9 +27,9 @@
       </div>
     </div>
   </div>
-  <div v-else class="main-page">
+  <div class="main-page" v-else>
     <div class="make-plan">네카라쿠배로 첫걸음.. 목표를 세우세요!</div>
-    <div class="plan-content">{{ testGroup }} - Day plans</div>
+    <div class="plan-content">{{ userInfo.userGroupStatus.userGroupName }} - Day plans</div>
     <div class="card-container">
       <v-card
         class="mx-auto my-8 plan-card"
@@ -86,12 +86,12 @@
         title="Rolling's plan"
         append-icon="mdi-dots-horizontal"
         ><v-container>
-          <v-checkbox v-model="selected" label="백준 2문제" value="John1"></v-checkbox>
-          <v-checkbox v-model="selected" label="백준 2문제" value="John1"></v-checkbox>
-          <v-checkbox v-model="selected" label="백준 2문제" value="John1"></v-checkbox>
-          <v-checkbox v-model="selected" label="백준 2문제" value="John1"></v-checkbox>
-          <v-checkbox v-model="selected" label="백준 2문제" value="John1"></v-checkbox>
-          <v-checkbox v-model="selected" label="알고리즘" value="Jacob1"></v-checkbox>
+          <v-checkbox v-model="selected" label="백준 2문제"></v-checkbox>
+          <v-checkbox v-model="selected" label="백준 2문제"></v-checkbox>
+          <v-checkbox v-model="selected" label="백준 2문제"></v-checkbox>
+          <v-checkbox v-model="selected" label="백준 2문제"></v-checkbox>
+          <v-checkbox v-model="selected" label="백준 2문제"></v-checkbox>
+          <v-checkbox v-model="selected" label="알고리즘"></v-checkbox>
         </v-container> </v-card
       ><v-card
         class="mx-auto my-8 plan-card"
@@ -126,14 +126,40 @@
 </template>
 
 <script setup>
-import useLogger from '@/composables/logger'
-import { onMounted, reactive, ref } from 'vue'
 import { useUserStore } from '@/stores/user.store'
-import { computed } from 'vue'
-import GroupMakeDialog from './dialogs/GroupMakeDialog.vue'
+import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import GroupMakeDialog from './dialogs/GroupMakeDialog.vue'
+
+const userStore = useUserStore()
+const userInfo = userStore.userInfo
 const router = useRouter()
-const temp = ref(false)
+const groupDialogVisible = ref(false)
+
+const dialog = reactive({
+  status: false,
+  text: '',
+  setDialog(text) {
+    this.status = true
+    this.text = text
+  }
+})
+
+const closeDialog = () => {
+  dialog.status = false
+}
+
+const onGroupDialog = () => {
+  groupDialogVisible.value = true
+}
+const onCloseGroupDialog = () => {
+  groupDialogVisible.value = false
+}
+
+const goHelp = () => {
+  router.push('/help')
+}
+
 const selected = ref(['John', 'Jacob5', 'Jacob7'])
 const tasks = reactive([
   {
@@ -155,35 +181,6 @@ const create = () => {
   })
 
   newTask.value = null
-}
-const model = ref(null)
-const userStore = useUserStore()
-const testGroup = computed(() => userStore.userInfo.userGroupname)
-
-const { log, errorLog } = useLogger()
-const groupDialogVisible = ref(false)
-const groupName = ref('')
-const dialog = reactive({
-  status: false,
-  text: '',
-  setDialog(text) {
-    this.status = true
-    this.text = text
-  }
-})
-const closeDialog = () => {
-  dialog.status = false
-}
-
-const onGroupDialog = () => {
-  groupDialogVisible.value = true
-}
-const onCloseGroupDialog = () => {
-  groupDialogVisible.value = false
-}
-
-const goHelp = () => {
-  router.push('/help')
 }
 </script>
 <style lang="scss" scoped>

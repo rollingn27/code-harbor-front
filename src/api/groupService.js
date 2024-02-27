@@ -56,4 +56,13 @@ const checkGroupName = async (params) => {
   }
 }
 
-export { createGroup, inviteGroup, checkGroupName }
+const showAllGroups = async (params) => {
+  try {
+    const response = await axiosInstance.post('/showAllGroups', params)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+export { createGroup, inviteGroup, checkGroupName, showAllGroups }

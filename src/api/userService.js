@@ -74,4 +74,13 @@ const findPassword = async (params) => {
   }
 }
 
-export { checkId, verifyCode, checkNickname, signupBasic, findPassword }
+const readAllMessages = async (params) => {
+  try {
+    const response = await axiosInstance.post('/readAllMessages', params)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+export { checkId, verifyCode, checkNickname, signupBasic, findPassword, readAllMessages }
