@@ -71,6 +71,8 @@ const updateUser = async () => {
     const user = response.data
     log(response)
     userStore.setUserInfo(user.userId, user.userNickname, user.userGroupStatus, user.newMessageList)
+    notiList.value = loginUser.newMessageList
+    if (notiList.value) noitCount.value = notiList.value.length
   } catch (error) {
     errorLog(error)
   }
@@ -83,8 +85,6 @@ const notiCheck = () => {
 }
 onMounted(() => {
   updateUser()
-  notiList.value = loginUser.newMessageList
-  if (notiList.value) noitCount.value = notiList.value.length
 })
 </script>
 <style lang="scss" scoped>
