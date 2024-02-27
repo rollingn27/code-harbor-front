@@ -50,16 +50,6 @@
     </v-text-field>
     <v-card-title class="text-h5">
       <v-icon> mdi-check </v-icon>
-      통계 페이지
-      <img src="@/assets/sidebarIcon/statistics.png" />
-    </v-card-title>
-    <v-text-field readonly>
-      <v-card-text>
-        <v-icon>mdi-circle-small</v-icon> 통계 페이지에서 스터디 진행상황을 확인하세요.
-      </v-card-text>
-    </v-text-field>
-    <v-card-title class="text-h5">
-      <v-icon> mdi-check </v-icon>
       친구 초대하기<img src="@/assets/sidebarIcon/invite.png" />
     </v-card-title>
     <v-text-field readonly>

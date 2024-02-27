@@ -29,12 +29,12 @@
   </v-dialog>
 </template>
 <script setup>
-import { onMounted, onUpdated, reactive, ref } from 'vue'
-import { groupService } from '@/api'
+import { groupService, loginService } from '@/api'
 import useLogger from '@/composables/logger'
 import { useUserStore } from '@/stores/user.store'
+import { onUpdated, reactive } from 'vue'
+import { useRouter } from 'vue-router'
 const { log, errorLog } = useLogger()
-const sdfsadfasdf = ref(false)
 const userStore = useUserStore()
 const props = defineProps({
   visible: {
@@ -78,6 +78,10 @@ const createGroup = async () => {
       isChecked: true
     })
     log(response)
+    const res = await loginService.latestUserInfo({ userId: userStore.userInfo.userId })
+    const user = res.data
+    userStore.setUserInfo(user.userId, user.userNickname, user.userGroupStatus)
+    closeGroupDialog()
     dialog.setDialog(response.data.msg)
   } catch (error) {
     errorLog(error)

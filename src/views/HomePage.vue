@@ -4,7 +4,7 @@
     <v-card>
       <v-card-text> {{ dialog.text }}</v-card-text>
       <v-card-actions class="justify-end">
-        <v-btn color="info" @click="closeDialog('ok')">ok</v-btn>
+        <v-btn color="info" @click="closeDialog">ok</v-btn>
         <v-btn color="info" @click="closeDialog" ref="logoutCancel">cancel</v-btn>
       </v-card-actions>
     </v-card>
@@ -30,10 +30,6 @@
         <img src="@/assets/sidebarIcon/shareproblem.png" alt="문제 공유" />
         <v-tooltip activator="parent" location="end">문제공유 페이지</v-tooltip>
       </div>
-      <div class="img-box">
-        <img src="@/assets/sidebarIcon/statistics.png" alt="통계" />
-        <v-tooltip activator="parent" location="end">통계 페이지</v-tooltip>
-      </div>
       <div class="img-box" @click="onInviteDialog">
         <img src="@/assets/sidebarIcon/invite.png" alt="그룹초대" />
         <v-tooltip activator="parent" location="end">그룹에 친구 초대</v-tooltip>
@@ -54,16 +50,23 @@
 import { loginService, groupService } from '@/api'
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user.store'
 import CodeHarborHeader from '@/components/common/CodeHarborHeader.vue'
+import useLogger from '@/composables/logger'
+const { log, errorLog } = useLogger()
 const router = useRouter()
 const dialog = reactive({
   status: false,
   text: '',
-  setDialog(text) {
+  type: '',
+  setDialog(text, type) {
     this.status = true
     this.text = text
+    this.type = type
   }
 })
+const userStore = useUserStore()
+const userInfo = userStore.userInfo
 const groupStatus = ref(false)
 const groupInvitee = ref('')
 const signOut = () => {
@@ -71,8 +74,8 @@ const signOut = () => {
   router.push({ path: '/signIn' })
 }
 
-const closeDialog = (type) => {
-  if (type === 'ok') {
+const closeDialog = () => {
+  if (dialog.type === 'logout') {
     signOut()
   }
   dialog.status = false
@@ -87,10 +90,10 @@ const invite = async () => {
     dialog.setDialog('초대받을 사람의 이메일을 입력하세요.')
     return
   }
-
   try {
     const response = await groupService.inviteGroup({
-      groupName: 'myGroup',
+      groupInvitor: userInfo.userId,
+      groupName: userInfo.userGroupStatus.userGroupName,
       groupInvitee: groupInvitee.value
     })
     log(response)
@@ -102,7 +105,7 @@ const invite = async () => {
   }
 }
 const onSignOut = () => {
-  dialog.setDialog('로그아웃 하시겠습니까?')
+  dialog.setDialog('로그아웃 하시겠습니까?', 'logout')
 }
 
 const goShare = () => {
