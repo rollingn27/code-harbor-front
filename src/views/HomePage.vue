@@ -4,7 +4,7 @@
     <v-card>
       <v-card-text> {{ dialog.text }}</v-card-text>
       <v-card-actions class="justify-end">
-        <v-btn color="info" @click="closeDialog">ok</v-btn>
+        <v-btn color="info" @click="closeDialog('ok')">ok</v-btn>
         <v-btn color="info" @click="closeDialog" ref="logoutCancel">cancel</v-btn>
       </v-card-actions>
     </v-card>
@@ -74,8 +74,8 @@ const signOut = () => {
   router.push({ path: '/signIn' })
 }
 
-const closeDialog = () => {
-  if (dialog.type === 'logout') {
+const closeDialog = (ok) => {
+  if (dialog.type === 'logout' && ok === 'ok') {
     signOut()
   }
   dialog.status = false
